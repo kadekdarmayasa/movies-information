@@ -14,3 +14,23 @@ body {
 a.btn {
 	font-weight: 600;
 }
+
+.loader {
+	height: 50px;
+	width: 50px;
+	border-radius: 50%;
+	margin: auto;
+	border-top: 3px solid blue;
+	border-right: 3px solid blue;
+	animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
