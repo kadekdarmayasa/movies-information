@@ -1,20 +1,19 @@
 (() => {
-	function getMovies(url) {
-		return new Promise((resolve, reject) => {
-			const ajax = new XMLHttpRequest();
-			ajax.onreadystatechange = function () {
-				if (ajax.readyState === 4) {
-					if (ajax.status === 200) {
-						resolve(this.response);
-					} else {
-						reject(this.response);
-					}
-				}
-			};
-			ajax.open('get', url);
-			ajax.send();
-		});
-	}
+	const timeout = async function () {
+		return Promise.reject().catch((e) => e);
+	};
+
+	const showLoadingIndicator = function () {
+		document.getElementById('loader').classList.add('loader');
+	};
+
+	const hideLoadingIndicator = function () {
+		document.getElementById('loader').classList.remove('loader');
+	};
+
+	const reset = function () {
+		document.getElementById('card-container').innerHTML = '';
+	};
 
 	const createCard = function (movie) {
 		return `<div class="col-md-3 my-4">
@@ -31,59 +30,64 @@
 	};
 
 	const getDetails = function (movieDetail) {
-		return `<div class="modal-header">
-          <h3 class="fw-semibold modal-title" id="movieDetailLabel">${movieDetail.Title}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="container-fuild">
-            <div class="row">
-              <div class="col-md-4">
-                <img
-                  src="${movieDetail.Poster}"
-                  alt="${movieDetail.Title}" class="img-fluid">
-              </div>
-              <div class="col-md-8">
-                <ol class="list-group">
-                  <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="me-auto">
-                      <div class="fw-bold">Released</div>
-                      <p class="fw-semibold text-muted">${movieDetail.Released}</p>
-                    </div>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="me-auto">
-                      <div class="fw-bold">Writer</div>
-                      <p class="fw-semibold text-muted">${movieDetail.Writer}</p>
-                    </div>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="me-auto">
-                      <div class="fw-bold">Actors</div>
-                      <p class="fw-semibold text-muted">${movieDetail.Actors}</p>
-                    </div>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="me-auto">
-                      <div class="fw-bold">Plot</div>
-                      <p class="fw-semibold text-muted">${movieDetail.Plot}</p>
-                    </div>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="me-auto">
-                      <div class="fw-bold">Awards</div>
-                      <p class="fw-semibold text-muted">${movieDetail.Awards}</p>
-                    </div>
-                  </li>
-                </ol>
-              </div>
-            </div>
-          </div>
-        </div>`;
+		return `
+						<div class="modal-header">
+								<h3 class="fw-semibold modal-title" id="movieDetailLabel">${movieDetail.Title}</h3>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="container-fuild">
+								<div class="row">
+									<div class="col-md-4">
+										<img
+											src="${movieDetail.Poster}"
+											alt="${movieDetail.Title}" class="img-fluid">
+									</div>
+									<div class="col-md-8">
+										<ol class="list-group">
+											<li class="list-group-item d-flex justify-content-between align-items-start">
+												<div class="me-auto">
+													<div class="fw-semibold">Released</div>
+													<p class="fw-regular text-muted">${movieDetail.Released}</p>
+												</div>
+											</li>
+											<li class="list-group-item d-flex justify-content-between align-items-start">
+												<div class="me-auto">
+													<div class="fw-semibold">Writer</div>
+													<p class="fw-regulara text-muted">${movieDetail.Writer}</p>
+												</div>
+											</li>
+											<li class="list-group-item d-flex justify-content-between align-items-start">
+												<div class="me-auto">
+													<div class="fw-semibold">Actors</div>
+													<p class="fw-regular text-muted">${movieDetail.Actors}</p>
+												</div>
+											</li>
+											<li class="list-group-item d-flex justify-content-between align-items-start">
+												<div class="me-auto">
+													<div class="fw-semibold">Plot</div>
+													<p class="fw-regular text-muted">${movieDetail.Plot}</p>
+												</div>
+											</li>
+											<li class="list-group-item d-flex justify-content-between align-items-start">
+												<div class="me-auto">
+													<div class="fw-semibold">Awards</div>
+													<p class="fw-regular text-muted">${movieDetail.Awards}</p>
+												</div>
+											</li>
+										</ol>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+						</div>
+					`;
 	};
 
 	const showContent = function (results) {
-		const movies = JSON.parse(results).Search;
+		const movies = results.Search;
 		let cards = '';
 		if (movies !== undefined) {
 			for (const movie of movies) {
@@ -108,33 +112,16 @@
 
 		const showDetails = document.querySelectorAll('.showDetails');
 
-		for (let i = 0; i < showDetails.length; i++) {
-			showDetails[i].addEventListener('click', function () {
+		showDetails.forEach((showDetail) => {
+			showDetail.addEventListener('click', function () {
 				let id = this.dataset.imdbid;
-				getMovies(`http://www.omdbapi.com/?apikey=36a96d2e&i=${id}`).then((results) => {
-					let movieDetail = JSON.parse(results);
-					document.querySelector('.modal-content').innerHTML = getDetails(movieDetail);
-				});
+				fetch(`http://www.omdbapi.com/?apikey=36a96d2e&i=${id}`)
+					.then((response) => response.json())
+					.then((movieDetail) => {
+						document.querySelector('.modal-content').innerHTML = getDetails(movieDetail);
+					});
 			});
-		}
-	};
-
-	const timeout = function () {
-		return new Promise((resolve, reject) => {
-			reject();
 		});
-	};
-
-	const showLoadingIndicator = function () {
-		document.getElementById('loader').classList.add('loader');
-	};
-
-	const hideLoadingIndicator = function () {
-		document.getElementById('loader').classList.remove('loader');
-	};
-
-	const reset = function () {
-		document.getElementById('card-container').innerHTML = '';
 	};
 
 	document.querySelector('.search').addEventListener('click', function () {
@@ -142,11 +129,14 @@
 
 		reset();
 
-		Promise.race([
-			getMovies('http://www.omdbapi.com/?apikey=36a96d2e&s=' + searchValue)
-				.then(showContent)
-				.then(hideLoadingIndicator),
-			timeout(),
-		]).catch(showLoadingIndicator);
+		(async () => {
+			Promise.race([
+				fetch('http://www.omdbapi.com/?apikey=36a96d2e&s=' + searchValue)
+					.then((response) => response.json())
+					.then(showContent)
+					.then(hideLoadingIndicator),
+				await timeout(),
+			]).catch(showLoadingIndicator);
+		})();
 	});
 })();
