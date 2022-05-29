@@ -1,6 +1,8 @@
 (() => {
-	const timeout = async function () {
-		return Promise.reject().catch((e) => e);
+	const timeout = function () {
+		return new Promise((resolve, reject) => {
+		  reject();
+		})
 	};
 
 	const showLoadingIndicator = function () {
@@ -135,7 +137,7 @@
 					.then((response) => response.json())
 					.then(showContent)
 					.then(hideLoadingIndicator),
-				await timeout(),
+				timeout(),
 			]).catch(showLoadingIndicator);
 		})();
 	});
