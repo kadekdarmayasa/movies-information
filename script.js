@@ -1,8 +1,8 @@
 (() => {
 	const timeout = function () {
 		return new Promise((resolve, reject) => {
-		  reject();
-		})
+			reject();
+		});
 	};
 
 	const showLoadingIndicator = function () {
