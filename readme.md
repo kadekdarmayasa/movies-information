@@ -7,4 +7,6 @@ API source : [Open Movie Database (OMDB)](https://www.omdbapi.com/)
 
 If you interested on this project, you could clone it.
 
-`git clone https://github.com/kadekdarmayasa/movies-information.git`
+```
+git clone https://github.com/kadekdarmayasa/movies-information.git
+```
