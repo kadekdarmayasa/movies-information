@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Righteous&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
 
 * {
@@ -13,8 +12,25 @@ body {
 	max-width: 1550px;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
 a.btn {
 	font-weight: 600;
+}
+
+img {
+	filter: saturate(200%);
+}
+
+a {
+	cursor: pointer;
 }
 
 .loader {
