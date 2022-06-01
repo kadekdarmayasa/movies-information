@@ -102,18 +102,12 @@
 	const responNotFound = function (keyword) {
 		page = 1;
 
-		reset();
-
-		Promise.race([
-			fetch('http://www.omdbapi.com/?apikey=36a96d2e&s=' + keyword + '&page=' + page)
-				.then((response) => ({
-					keyword: keyword,
-					response: response.json(),
-				}))
-				.then(renderMovies)
-				.then(hideLoadingIndicator),
-			timeout(),
-		]).catch(showLoadingIndicator);
+		fetch('http://www.omdbapi.com/?apikey=36a96d2e&s=' + keyword + '&page=' + page)
+			.then((response) => ({
+				keyword: keyword,
+				response: response.json(),
+			}))
+			.then(renderMovies);
 	};
 
 	const renderMovies = function (results) {
@@ -167,18 +161,8 @@
 		});
 	};
 
-	document.addEventListener('click', function (e) {
-		if (e.target.classList.contains('showDetails')) {
-			let id = e.target.dataset.imdbid;
-			updateDetails(id);
-		}
-
-		if (e.target.classList.contains('prev')) {
-			let searchValue = e.target.dataset.keyword;
-			if (page > 1) {
-				document.querySelector('.prev').style.display = 'flex';
-				--page;
-			}
+	const fetchMovieBasedPage = function (searchValue, page) {
+		Promise.race([
 			fetch('http://www.omdbapi.com/?apikey=36a96d2e&s=' + searchValue + '&page=' + page)
 				.then((response) => ({
 					keyword: searchValue,
@@ -186,27 +170,32 @@
 					page: true,
 					response: response.json(),
 				}))
-				.then(renderMovies);
-		}
+				.then(renderMovies)
+				.then(hideLoadingIndicator),
+			timeout(),
+		]).catch(showLoadingIndicator);
+	};
 
-		if (e.target.classList.contains('next')) {
-			let searchValue = e.target.dataset.keyword;
-			++page;
-
-			reset();
-
-			Promise.race([
-				fetch('http://www.omdbapi.com/?apikey=36a96d2e&s=' + searchValue + '&page=' + page)
-					.then((response) => ({
-						keyword: searchValue,
-						pageNumber: page,
-						page: true,
-						response: response.json(),
-					}))
-					.then(renderMovies)
-					.then(hideLoadingIndicator),
-				timeout(),
-			]).catch(showLoadingIndicator);
+	document.addEventListener('click', function (e) {
+		switch (true) {
+			case e.target.classList.contains('showDetails'):
+				let id = e.target.dataset.imdbid;
+				updateDetails(id);
+				break;
+			case e.target.classList.contains('prev'):
+				var searchValue = e.target.dataset.keyword;
+				if (page > 1) {
+					document.querySelector('.prev').style.display = 'flex';
+					--page;
+				}
+				reset();
+				fetchMovieBasedPage(searchValue, page);
+				break;
+			case e.target.classList.contains('next'):
+				var searchValue = e.target.dataset.keyword;
+				++page;
+				reset();
+				fetchMovieBasedPage(searchValue, page);
 		}
 	});
 
@@ -221,6 +210,7 @@
 	// Trigger if user click search button
 	document.querySelector('.search').addEventListener('click', function () {
 		let searchValue = document.querySelector('input.searchValue').value;
+		searchValue = searchValue.trim();
 
 		reset();
 
