@@ -1,11 +1,7 @@
 (() => {
 	let page = 1;
 
-	const timeout = function () {
-		return new Promise((resolve, reject) => {
-			reject();
-		});
-	};
+	const timeout = () => new Promise((resolve, reject) => reject());
 
 	const showLoadingIndicator = function () {
 		document.getElementById('loader').classList.add('loader');
@@ -20,7 +16,7 @@
 		document.querySelector('.prev-next').innerHTML = '';
 	};
 
-	const createCard = function (movie) {
+	const createCard = (movie) => {
 		return `<div class="col-md-3 my-4">
 									<div class="card border border-white">
 										<img
@@ -34,7 +30,7 @@
 								</div>`;
 	};
 
-	const renderDetails = function (movieDetail) {
+	const renderDetails = (movieDetail) => {
 		return `
 						<div class="modal-header">
 								<h3 class="fw-semibold modal-title" id="movieDetailLabel">${movieDetail.Title}</h3>
@@ -74,7 +70,7 @@
 													<p class="fw-regular text-muted">${movieDetail.Plot}</p>
 												</div>
 											</li>
-											<li class="list-group-item d-flex justify-content-between align-items-start">
+											<li class="list-group-item d-flex jusatify-content-between align-items-start">
 												<div class="me-auto">
 													<div class="fw-semibold">Awards</div>
 													<p class="fw-regular text-muted">${movieDetail.Awards}</p>
@@ -84,9 +80,6 @@
 									</div>
 								</div>
 							</div>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
 						</div>
 					`;
 	};
@@ -116,7 +109,7 @@
 			let cards = '';
 
 			if (movies !== undefined) {
-				for (const movie of movies) {
+				movies.forEach((movie) => {
 					if (movie.Poster !== 'N/A') {
 						cards += createCard(movie);
 						document.getElementById('card-container').innerHTML = cards;
@@ -145,7 +138,7 @@
 							</nav>`;
 						}
 					}
-				}
+				});
 			} else {
 				if (results.page) {
 					responNotFound(results.keyword);
